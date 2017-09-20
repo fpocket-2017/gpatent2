@@ -8,7 +8,7 @@ PATH_DIR_OUTPUT_HTML = u'data/output/html'
 
 PATH_DIR_OUTPUT_TEXT             = u'data/output/txt'
 PATH_DIR_OUTPUT_TEXT_DESCRIPTION = u'data/output/txt/description'
-PATH_DIR_OUTPUT_TEXT_CLAIMS      = u'data/output/txt/description'
+PATH_DIR_OUTPUT_TEXT_CLAIMS      = u'data/output/txt/claims'
 PATH_DIR_OUTPUT_TEXT_ABSTRACT    = u'data/output/txt/abstract'
 
 PATH_FILE_SEARCH_WORDS = u'{0}/{1}'.format(PATH_DIR_INPUT,  'search_words.txt')

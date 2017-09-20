@@ -2,7 +2,6 @@
 import os
 import codecs
 import re
-import pdb
 
 import xml.etree.ElementTree as et
 
@@ -12,13 +11,31 @@ import bs4
 import const
 import utils
 
-def extractDescription(text):
-    soup = bs4.BeautifulSoup(text, 'lxml')
-    section = soup.find(itemprop = u'description')
-    if section != None:
-        return(section.find(itemprop = u'content'))
-    else:
-        return(None)
+def extractDescription(html):
+    soup = bs4.BeautifulSoup(html, 'lxml')
+    
+    current = soup.find(itemprop = u'description')
+    if current == None: return(None)
+    
+    current = current.find(itemprop = u'content')
+    if current == None: return(None)
+    
+    return(current.text)
+
+def extractClaims(html):
+    claims = []
+
+    soup = bs4.BeautifulSoup(html, 'lxml')
+    
+    current = soup.find(itemprop = u'claims')
+    if current == None: return(None)
+
+    current = current.find(num = u'1')
+    if current == None: return(None)
+    
+    claims.append(current.text)
+    
+    return(claims)
 
 def paragraphSplit(text):
     return(re.split(r'\n', text))
@@ -57,10 +74,19 @@ def analyze(root, search_words, pnum, url):
     if description != None:
         fname = '{0}/{1}.txt'.format(const.PATH_DIR_OUTPUT_TEXT_DESCRIPTION, pnum)
         with codecs.open(fname, 'w', 'utf-8') as fp:
-                fp.write(html)
+                fp.write(description)
 
         print('Analyzing...\n')
-        paragraphs = paragraphSplit(description.text)
+        paragraphs = paragraphSplit(description)
         wordSearch(root, search_words, paragraphs)
     else:
         print('Description is not available\n')
+
+    claims = extractClaims(html)
+
+    if claims != None:
+        fname = '{0}/{1}.txt'.format(const.PATH_DIR_OUTPUT_TEXT_CLAIMS, pnum)
+        with codecs.open(fname, 'w', 'utf-8') as fp:
+                fp.write(claims[0])
+    else:
+        print('Claims are not available\n')
