@@ -14,18 +14,18 @@ import utils
 
 def htmlParse(text):
     soup = bs4.BeautifulSoup(text, 'lxml')
-    section = soup.find(itemprop = u"description")
+    section = soup.find(itemprop = u'description')
     if section != None:
-        return(section.find(itemprop = u"content"))
+        return(section.find(itemprop = u'content'))
     else:
         return(None)
 
 def paragraphSplit(text):
-    return(re.split(r"\n", text))
+    return(re.split(r'\n', text))
 
-def wordSearch(root, search_words, paragraphs):
+def wordSearch(root, words, paragraphs):
     for paragraph in paragraphs:
-        for word in search_words:
+        for word in words:
             if re.search(word, paragraph) != None:
                 p = et.SubElement(root, 'p')
                 p.text = paragraph
