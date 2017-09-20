@@ -9,7 +9,7 @@ import xml.etree.ElementTree as et
 import requests
 import bs4
 
-from  const import PATH_DIR_OUTPUT_TEXT
+from  const import PATH_DIR_OUTPUT_HTML
 import utils
 
 def htmlParse(text):
@@ -32,13 +32,13 @@ def wordSearch(root, words, paragraphs):
                 break
 
 def analyze(root, search_words, pnum, url):
-    fname = '{0}/{1}_{2}.txt'.format(PATH_DIR_OUTPUT_TEXT, pnum, 'd')
+    fname = '{0}/{1}.html'.format(PATH_DIR_OUTPUT_HTML, pnum)
 
     if os.path.exists(fname):
-        print(u'Text data is already exist')
+        print(u'HTML data is already exist')
         
         with codecs.open(fname, 'r', 'utf-8') as fp:
-            text = fp.read()
+            html = fp.read()
     else:
         print('Getting Information from Patents.Google.com...')
         
@@ -46,18 +46,19 @@ def analyze(root, search_words, pnum, url):
         print(u'Status Code: {0}\n'.format(str(response.status_code)))
 
         response.encoding = 'utf-8'
-        
-        description = htmlParse(response.text)
 
-        if description == None:
-            print('Description is not available\n')
-            return()
-        
-        text = description.text
+        html = response.text
+
         with codecs.open(fname, 'w', 'utf-8') as fp:
-            fp.write(text)
+            fp.write(html)
+            
+    description = htmlParse(html)
 
-    paragraphs = paragraphSplit(text)
+    if description == None:
+        print('Description is not available\n')
+        return()
+        
+    paragraphs = paragraphSplit(description.text)
 
     print('Analyzing...\n')
     wordSearch(root, search_words, paragraphs)
