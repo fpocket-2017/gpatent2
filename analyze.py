@@ -9,10 +9,10 @@ import xml.etree.ElementTree as et
 import requests
 import bs4
 
-from  const import PATH_DIR_OUTPUT_HTML
+import const
 import utils
 
-def htmlParse(text):
+def extractDescription(text):
     soup = bs4.BeautifulSoup(text, 'lxml')
     section = soup.find(itemprop = u'description')
     if section != None:
@@ -32,7 +32,7 @@ def wordSearch(root, words, paragraphs):
                 break
 
 def analyze(root, search_words, pnum, url):
-    fname = '{0}/{1}.html'.format(PATH_DIR_OUTPUT_HTML, pnum)
+    fname = '{0}/{1}.html'.format(const.PATH_DIR_OUTPUT_HTML, pnum)
 
     if os.path.exists(fname):
         print(u'HTML data is already exist')
@@ -51,14 +51,16 @@ def analyze(root, search_words, pnum, url):
 
         with codecs.open(fname, 'w', 'utf-8') as fp:
             fp.write(html)
-            
-    description = htmlParse(html)
+    
+    description = extractDescription(html)
 
-    if description == None:
+    if description != None:
+        fname = '{0}/{1}.txt'.format(const.PATH_DIR_OUTPUT_TEXT_DESCRIPTION, pnum)
+        with codecs.open(fname, 'w', 'utf-8') as fp:
+                fp.write(html)
+
+        print('Analyzing...\n')
+        paragraphs = paragraphSplit(description.text)
+        wordSearch(root, search_words, paragraphs)
+    else:
         print('Description is not available\n')
-        return()
-        
-    paragraphs = paragraphSplit(description.text)
-
-    print('Analyzing...\n')
-    wordSearch(root, search_words, paragraphs)
